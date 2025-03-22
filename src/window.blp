@@ -1,0 +1,75 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PomodoroWindow: Adw.ApplicationWindow {
+  title: _("Pomodoro");
+  default-width: 800;
+  default-height: 600;
+
+  content: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      [start]
+      MenuButton {
+        primary: true;
+        icon-name: "open-menu-symbolic";
+        tooltip-text: _("Main Menu");
+        menu-model: primary_menu;
+      }
+    }
+
+    content: Box {
+      orientation: vertical;
+      halign: center;
+      valign: center;
+
+      Label label {
+        label: _("00:00");
+
+        styles [
+          "title-1",
+        ]
+
+        halign: center;
+        valign: center;
+        margin-bottom: 20;
+      }
+
+      Box {
+        orientation: horizontal;
+        halign: center;
+        valign: center;
+
+        Button start_button {
+          label: _("Start Timer");
+          halign: center;
+          margin-end: 10;
+        }
+
+        Button reset_button {
+          label: _("Reset Timer");
+          halign: center;
+        }
+      }
+    };
+  };
+}
+
+menu primary_menu {
+  section {
+    item {
+      label: _("_Preferences");
+      action: "app.preferences";
+    }
+
+    item {
+      label: _("_Keyboard Shortcuts");
+      action: "win.show-help-overlay";
+    }
+
+    item {
+      label: _("_About Pomodoro");
+      action: "app.about";
+    }
+  }
+}
