@@ -1,13 +1,13 @@
 import GObject from "gi://GObject";
 import GLib from "gi://GLib";
-import Gtk from "gi://Gtk";
 import Adw from "gi://Adw";
+import Gio from "gi://Gio";
 
 export const PomodoroWindow = GObject.registerClass(
   {
     GTypeName: "PomodoroWindow",
     Template: "resource:///org/gnome/Example/window.ui",
-    InternalChildren: ["label", "start_button", "reset_button"],
+    InternalChildren: ["label", "start_button", "reset_button", "toast_overlay"],
   },
   class PomodoroWindow extends Adw.ApplicationWindow {
     constructor(application) {
@@ -22,8 +22,9 @@ export const PomodoroWindow = GObject.registerClass(
         PomodoroWindow,
         "reset_button"
       );
+      this.toast_overlay = this.get_template_child(PomodoroWindow, "toast_overlay")
 
-      this.workDuration = 678 * 60;
+      this.workDuration = 0.05 * 60;
       this.timeLeft = this.workDuration;
       this.timer = null;
 
@@ -45,6 +46,13 @@ export const PomodoroWindow = GObject.registerClass(
     }
 
     startTimer() {
+      const toast = new Adw.Toast({
+        title: "Timer has been started",
+        timeout: 5,
+      });
+
+      this.toast_overlay.add_toast(toast);
+
       if (this.timer) {
         GLib.source_remove(this.timer);
         this.timer = null;
@@ -60,6 +68,10 @@ export const PomodoroWindow = GObject.registerClass(
       // When timer has finished
       if (this.timeLeft <= 0) {
         GLib.source_remove(this.timer);
+        this.timer = null;
+
+        this.showNotification();
+        return false;
       }
 
       this.timeLeft--;
@@ -75,6 +87,21 @@ export const PomodoroWindow = GObject.registerClass(
 
       this.timeLeft = this.workDuration;
       this.updateLabel();
+    }
+
+    showNotification() {
+      let notification = new Gio.Notification();
+
+      notification.set_title("Pomodoro Timer");
+      notification.set_body("Your pomodoro session has ended");
+
+      // const iconFile = Gio.File.new_for_path("path/icon.png");
+      // const icon = new Gio.FileIcon({ file });
+      // notification.set_icon(icon);
+
+      // notification.add_button("Start New Pomodoro", "app.start-new-pomodoro");
+
+      this.get_application().send_notification("pomodoro-ended", notification);
     }
   }
 );
