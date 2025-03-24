@@ -38,14 +38,14 @@ export const PomodoroApplication = GObject.registerClass(
       });
 
       const quit_action = new Gio.SimpleAction({ name: "quit" });
-      quit_action.connect("activate", (action) => {
+      quit_action.connect("activate", () => {
         this.quit();
       });
       this.add_action(quit_action);
       this.set_accels_for_action("app.quit", ["<primary>q"]);
 
       const show_about_action = new Gio.SimpleAction({ name: "about" });
-      show_about_action.connect("activate", (action) => {
+      show_about_action.connect("activate", () => {
         const aboutParams = {
           application_name: "pomodoro",
           application_icon: "org.gnome.Example",
