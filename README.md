@@ -1,3 +1,3 @@
 # pomodoro
 
-A description of this project.
+GNOME JS Pomodoro timer application
